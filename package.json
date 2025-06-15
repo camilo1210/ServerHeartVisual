@@ -9,11 +9,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.10.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sterraquio/ServerHeartVisual.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sterraquio/ServerHeartVisual/issues"
+  },
+  "homepage": "https://github.com/sterraquio/ServerHeartVisual#readme",
+  "description": ""
 }
