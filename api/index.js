@@ -1,6 +1,6 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
+const dotenv = require("dotenv");
 const connectDB = require("./database/database");
 const UserDAO = require("./dao/UserDAO");
 
