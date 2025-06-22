@@ -2,44 +2,87 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./database/database");
+const mongoose = require("mongoose");
 const UserDAO = require("./dao/UserDAO");
 
+dotenv.config();
 connectDB();
 
-//load enviroment variables
-dotenv.config();
-
-
-//create express app
 const app = express();
 
-//middlewares
-app.use(express.json()); //parse json requests
-app.use(cors({ //enable cors with configuration
-    origin: true,   //Allow all origins (restrict in production)
-    credentials: true   //Allow credentials (cookies, authorization headers)
+app.use(express.json());
+app.use(cors({
+  origin: true,
+  credentials: true
 }));
 
-//Health check endpoint
+// Health check
 app.get("/", (req, res) => {
-    res.send("Serer is running");
+  res.send("Server is running ✅");
 });
 
-
-// Instantiate UserDAO
+// === Usuarios ===
 const userDAO = new UserDAO();
-
-//Routes for user
 app.get("/api/v1/users/", (req, res) => userDAO.getAll(req, res));
 app.post("/api/v1/users/", (req, res) => userDAO.create(req, res));
 app.get("/api/v1/users/:id", (req, res) => userDAO.getById(req, res));
 app.put("/api/v1/users/:id", (req, res) => userDAO.update(req, res));
 app.delete("/api/v1/users/:id", (req, res) => userDAO.delete(req, res));
 
-//Config port
-const PORT = process.env.PORT || 3000;
+// === Quiz ===
+const resultadoSchema = new mongoose.Schema({
+  displayName: String,
+  email: String,
+  score: Number,
+  totalQuestions: Number,
+  date: { type: Date, default: Date.now },
+});
+const Resultado = mongoose.model("Resultado", resultadoSchema);
 
-//Start server
+app.post("/quiz/save-score", async (req, res) => {
+  const { displayName, email, score, totalQuestions } = req.body;
+  if (!email || score == null || !totalQuestions) {
+    return res.status(400).json({ message: "Datos incompletos" });
+  }
+  try {
+    const nuevoResultado = new Resultado({ displayName, email, score, totalQuestions });
+    await nuevoResultado.save();
+    res.status(200).json({ message: "Puntuación guardada con éxito" });
+  } catch (error) {
+    console.error("Error al guardar resultado:", error);
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+app.get("/quiz/scores", async (req, res) => {
+  try {
+    const topScores = await Resultado.find().sort({ score: -1, date: 1 }).limit(10);
+    res.status(200).json(topScores);
+  } catch (err) {
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+app.get("/quiz/results", async (req, res) => {
+  try {
+    const resultados = await Resultado.find().sort({ date: -1 }).limit(50);
+    res.status(200).json(resultados);
+  } catch (err) {
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+app.get("/quiz/top", async (req, res) => {
+  try {
+    const topResultados = await Resultado.find().sort({ score: -1, date: 1 }).limit(3);
+    res.status(200).json(topResultados);
+  } catch (error) {
+    res.status(500).json({ message: "Error del servidor" });
+  }
+});
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
