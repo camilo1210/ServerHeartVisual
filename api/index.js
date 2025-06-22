@@ -1,25 +1,16 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./database/database");
-const mongoose = require("mongoose");
 const UserDAO = require("./dao/UserDAO");
 
 dotenv.config();
 connectDB();
 
 const app = express();
-
 app.use(express.json());
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-
-// Health check
-app.get("/", (req, res) => {
-  res.send("Server is running ✅");
-});
+app.use(cors({ origin: true, credentials: true }));
 
 // === Usuarios ===
 const userDAO = new UserDAO();
@@ -81,8 +72,13 @@ app.get("/quiz/top", async (req, res) => {
   }
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
+// ✅ Health Check
+app.get("/", (req, res) => {
+  res.send("🚀 Backend combinado corriendo");
+});
+
+// 🚀 Start server
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
 });
