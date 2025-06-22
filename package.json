@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "concurrently \"node api/server.js\" \"node api/index.js\"",
+    "start": "concurrently \"node api/index.js\" \"node api/server.js\"",
     "server": "node server.js",
     "api": "node api/index.js",
     "dev": "node --watch api/index.js"
