@@ -32,6 +32,7 @@ const Resultado = mongoose.model("Resultado", resultadoSchema);
 
 app.post("/quiz/save-score", async (req, res) => {
   const { displayName, email, score, totalQuestions } = req.body;
+  console.log("Datos recibidos:", req.body);
   if (!email || score == null || !totalQuestions) {
     return res.status(400).json({ message: "Datos incompletos" });
   }
