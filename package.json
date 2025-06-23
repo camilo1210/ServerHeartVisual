@@ -2,7 +2,7 @@
   "name": "server-proyecto",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
+  
   "scripts": {
     "start": "node api/index.js",
     "server": "node server.js",
